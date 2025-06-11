@@ -3,6 +3,7 @@
 from langchain.chat_models import init_chat_model
 from langchain_core.language_models import BaseChatModel
 from langchain_core.messages import BaseMessage
+from langchain_google_genai import ChatGoogleGenerativeAI
 
 
 def get_message_text(msg: BaseMessage) -> str:
@@ -23,5 +24,8 @@ def load_chat_model(fully_specified_name: str) -> BaseChatModel:
     Args:
         fully_specified_name (str): String in the format 'provider/model'.
     """
-    provider, model = fully_specified_name.split("/", maxsplit=1)
-    return init_chat_model(model, model_provider=provider)
+    if "/" in fully_specified_name:
+        provider, model = fully_specified_name.split("/", maxsplit=1)
+        return init_chat_model(model, model_provider=provider)
+    # Handle cases like "gemini-2.5-flash-preview-05-20"
+    return ChatGoogleGenerativeAI(model=fully_specified_name)
